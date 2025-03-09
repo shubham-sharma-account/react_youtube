@@ -1,17 +1,57 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
 import { Link } from "react-router-dom";
+import { SEARCH_SUGGESTIONS } from "../utils/constants";
+import { cacheSearch } from "../utils/searchSlice";
 
 function Head() {
+  const [searchValue, setSearchValue] = useState("");
+  const [suggestions, setSuggestions] = useState("");
+  const [showSuggestions, setshowSuggestions] = useState(false);
+  const cacheStore = useSelector((state) => state.search);
+
   const dispatch = useDispatch();
 
   const handleMenuToggle = () => {
     dispatch(toggleMenu());
   };
 
+  const handleSearch = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  useEffect(() => {
+    const getSearhSuggestions = async () => {
+      const result = await fetch(`${SEARCH_SUGGESTIONS}${searchValue}`);
+      const data = await result.json();
+      setSuggestions(data[1]);
+
+      dispatch(
+        cacheSearch({
+          [searchValue]: data[1],
+        })
+      );
+    };
+
+    const timer = setTimeout(() => {
+      console.log("cacheStore ", cacheStore);
+      if (cacheStore[searchValue]) {
+        setSuggestions(cacheStore[searchValue]);
+      } else {
+        getSearhSuggestions();
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchValue]);
+
   return (
+    // Header
     <div className="grid grid-flow-col p-5 shadow-lg">
+      {/*  Logo and menu*/}
       <div className="flex col-span-1 justify-start">
         <img
           onClick={() => handleMenuToggle()}
@@ -27,16 +67,35 @@ function Head() {
           />
         </Link>
       </div>
+      {/* Search bar */}
       <div className="col-span-10 text-center">
-        <input
-          className="w-1/2 border border-gray-400 p-2 rounded-l-full"
-          placeholder="Search"
-          type="text"
-        />
-        <button className="border border-gray-400 p-2 rounded-r-full bg-gray-200">
-          🔍
-        </button>
+        <div>
+          <input
+            className="w-1/2 border border-gray-400 p-2 rounded-l-full"
+            placeholder="Search"
+            type="text"
+            onChange={handleSearch}
+            onFocus={() => setshowSuggestions(true)}
+            onBlur={() => setshowSuggestions(false)}
+          />
+          <button className="border border-gray-400 p-2 rounded-r-full bg-gray-200">
+            🔍
+          </button>
+        </div>
+        {/* Suggestions lis */}
+        <div className="absolute bg-white text-left rounded-lg mx-80 px-4 w-2/5 shadow-lg">
+          {suggestions &&
+            showSuggestions &&
+            suggestions.map((suggestion) => {
+              return (
+                <ul>
+                  <li className="py-1 hover:bg-gray-200">🔍 {suggestion}</li>
+                </ul>
+              );
+            })}
+        </div>
       </div>
+      {/* user profile */}
       <div className="col-span-1 justify-evenly">
         <img
           className="h-8"
