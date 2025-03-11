@@ -2,14 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
 import { Link } from "react-router-dom";
-import { SEARCH_SUGGESTIONS } from "../utils/constants";
+import {
+  BASE_URL,
+  GOOGLE_API_KEY,
+  SEARCH_SUGGESTIONS,
+} from "../utils/constants";
 import { cacheSearch } from "../utils/searchSlice";
+import ListVideos from "./ListVideos";
 
 function Head() {
   const [searchValue, setSearchValue] = useState("");
   const [suggestions, setSuggestions] = useState("");
   const [showSuggestions, setshowSuggestions] = useState(false);
   const cacheStore = useSelector((state) => state.search);
+  const [searchSuggestion, setSearchSuggestion] = useState("");
 
   const dispatch = useDispatch();
 
@@ -20,6 +26,23 @@ function Head() {
   const handleSearch = (e) => {
     setSearchValue(e.target.value);
   };
+
+  const handleClickSuggestion = (suggestion) => {
+    setSearchSuggestion(suggestion);
+    // /search?part=snippet&maxResults=20&q=dubai&type=video&key=
+  };
+
+  useEffect(() => {
+    const getSuggestionVideos = async () => {
+      const result = await fetch(
+        `${BASE_URL}/search?part=snippet&maxResults=1&q=${searchSuggestion}&type=video&key=${GOOGLE_API_KEY}`
+      );
+      const data = await result.json();
+      console.log("data >> ", data)
+    };
+
+    getSuggestionVideos();
+  }, [searchSuggestion]);
 
   useEffect(() => {
     const getSearhSuggestions = async () => {
@@ -76,7 +99,8 @@ function Head() {
             type="text"
             onChange={handleSearch}
             onFocus={() => setshowSuggestions(true)}
-            onBlur={() => setshowSuggestions(false)}
+            //added delay on blur coz handleClickSuggestion was not bwing called
+            onBlur={() => setTimeout(() => setshowSuggestions(false), 200)}
           />
           <button className="border border-gray-400 p-2 rounded-r-full bg-gray-200">
             🔍
@@ -84,15 +108,20 @@ function Head() {
         </div>
         {/* Suggestions lis */}
         <div className="absolute bg-white text-left rounded-lg mx-80 px-4 w-2/5 shadow-lg">
-          {suggestions &&
-            showSuggestions &&
-            suggestions.map((suggestion) => {
-              return (
-                <ul>
-                  <li className="py-1 hover:bg-gray-200">🔍 {suggestion}</li>
-                </ul>
-              );
-            })}
+          {suggestions && showSuggestions && (
+            <ul>
+              {suggestions.map((suggestion) => {
+                return (
+                  <li
+                    className="py-1 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => handleClickSuggestion(suggestion)}
+                  >
+                    🔍 {suggestion}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
       {/* user profile */}

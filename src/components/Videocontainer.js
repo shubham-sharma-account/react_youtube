@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BASE_URL, GOOGLE_API_KEY } from "../utils/constants";
-import VideoCard from "./VideoCard";
-import { Link } from "react-router-dom";
+import ListVideos from "./ListVideos";
 
 function Videocontainer() {
   const [videos, setVideos] = useState([]);
@@ -16,15 +15,7 @@ function Videocontainer() {
   };
 
   return (
-    <div className="flex flex-wrap px-15">
-      {videos.map((video) => {
-        return (
-          <Link to={`/watch?v=${video.id}`}>
-            <VideoCard key={video.id} info={video} />
-          </Link>
-        );
-      })}
-    </div>
+    <ListVideos videos={videos} />
   );
 }
 
