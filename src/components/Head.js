@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
 import { Link } from "react-router-dom";
@@ -8,7 +8,7 @@ import {
   SEARCH_SUGGESTIONS,
 } from "../utils/constants";
 import { cacheSearch } from "../utils/searchSlice";
-import ListVideos from "./ListVideos";
+import { VideoContext } from "../utils/appContext/VideoContext";
 
 function Head() {
   const [searchValue, setSearchValue] = useState("");
@@ -18,6 +18,7 @@ function Head() {
   const [searchSuggestion, setSearchSuggestion] = useState("");
 
   const dispatch = useDispatch();
+  const { setVideos } = useContext(VideoContext);
 
   const handleMenuToggle = () => {
     dispatch(toggleMenu());
@@ -35,14 +36,15 @@ function Head() {
   useEffect(() => {
     const getSuggestionVideos = async () => {
       const result = await fetch(
-        `${BASE_URL}/search?part=snippet&maxResults=1&q=${searchSuggestion}&type=video&key=${GOOGLE_API_KEY}`
+        `${BASE_URL}/search?part=snippet&maxResults=30&q=${searchSuggestion}&type=video&key=${GOOGLE_API_KEY}`
       );
       const data = await result.json();
-      console.log("data >> ", data)
+      console.log("data >> ", data);
+      setVideos(data?.items);
     };
 
     getSuggestionVideos();
-  }, [searchSuggestion]);
+  }, [searchSuggestion, setVideos]);
 
   useEffect(() => {
     const getSearhSuggestions = async () => {
@@ -69,7 +71,7 @@ function Head() {
     return () => {
       clearTimeout(timer);
     };
-  }, [searchValue]);
+  }, [searchValue, cacheStore, dispatch]);
 
   return (
     // Header

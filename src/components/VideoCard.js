@@ -3,6 +3,8 @@ import React from "react";
 function VideoCard({ info }) {
   if (!info) return false;
 
+  console.log("info ",info)
+
   const { snippet, statistics } = info;
   const { title, channelTitle, thumbnails } = snippet;
 
@@ -16,7 +18,7 @@ function VideoCard({ info }) {
       <ul className="max-h-38 h-40">
         <li className="font-bold py-2">{title}</li>
         <li>{channelTitle}</li>
-        <li>{statistics.viewCount}</li>
+        <li>{statistics?.viewCount}</li>
         <li></li>
       </ul>
     </div>
