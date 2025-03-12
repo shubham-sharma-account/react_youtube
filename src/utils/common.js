@@ -31,4 +31,34 @@ function formatViews(count) {
   return (count / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
 }
 
-module.exports = { timeAgo, formatViews };
+function getRandomComment() {
+  const comments = [
+      "Great job!",
+      "Keep up the good work!",
+      "Nice effort!",
+      "This is really helpful!",
+      "I love this!",
+      "Could use some improvements!",
+      "Well done!",
+      "Interesting perspective!",
+      "Fantastic explanation!",
+      "Thanks for sharing!"
+  ];
+  
+  const randomIndex = Math.floor(Math.random() * comments.length);
+  return comments[randomIndex];
+}
+
+function getRandomName() {
+  const names = [
+      "Alice", "Bob", "Charlie", "David", "Emma", 
+      "Frank", "Grace", "Hannah", "Isaac", "Jack", 
+      "Katherine", "Liam", "Mia", "Noah", "Olivia", 
+      "Paul", "Quinn", "Rachel", "Sam", "Tom"
+  ];
+  
+  const randomIndex = Math.floor(Math.random() * names.length);
+  return names[randomIndex];
+}
+
+module.exports = { timeAgo, formatViews, getRandomComment, getRandomName };

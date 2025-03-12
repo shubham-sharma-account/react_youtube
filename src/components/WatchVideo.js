@@ -6,6 +6,8 @@ import { BASE_URL, GOOGLE_API_KEY } from "../utils/constants";
 import { formatViews, timeAgo } from "../utils/common";
 import VideoComment from "./VideoComment";
 import VideoSuggestions from "./VideoSuggestions";
+import LiveVideoChats from "./LiveVideoChats";
+import { addMessage } from "../utils/chatSlice";
 
 function WatchVideo() {
   const dispatch = useDispatch();
@@ -13,6 +15,7 @@ function WatchVideo() {
   const videoId = query.get("v");
   const [videoDetails, setVideoDetails] = useState(null);
   const [showDescription, setShowDescription] = useState(0);
+  const [message, setMessage] = useState("");
 
   const getVideoDetils = useCallback(async () => {
     try {
@@ -41,6 +44,15 @@ function WatchVideo() {
 
   const handleShowDescription = () => {
     setShowDescription(!showDescription);
+  };
+
+  const handleSendMessage = () => {
+    const msgObj = {
+      name: "Shubham Sharma",
+      message: message,
+    };
+    dispatch(addMessage(msgObj));
+    setMessage("");
   };
 
   return (
@@ -141,6 +153,26 @@ function WatchVideo() {
           )}
         </div>
         <div className="ml-16 rounded-lg h-auto w-2/6">
+          <LiveVideoChats />
+          <div className="my-1">
+            <input
+              type="text"
+              className="border border-black px-3 w-96 rounded-lg py-1"
+              value={message}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSendMessage();
+                }
+              }}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <button
+              onClick={handleSendMessage}
+              className="bg-gray-200 py-1 px-3 border border-gray-500 rounded-lg mx-2"
+            >
+              Send
+            </button>
+          </div>
           <VideoSuggestions />
         </div>
       </div>
