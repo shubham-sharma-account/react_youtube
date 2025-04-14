@@ -39,7 +39,6 @@ function Head() {
         `${BASE_URL}/search?part=snippet&maxResults=30&q=${searchSuggestion}&type=video&key=${GOOGLE_API_KEY}`
       );
       const data = await result.json();
-      console.log("data >> ", data);
       setVideos(data?.items);
     };
 
@@ -60,7 +59,6 @@ function Head() {
     };
 
     const timer = setTimeout(() => {
-      console.log("cacheStore ", cacheStore);
       if (cacheStore[searchValue]) {
         setSuggestions(cacheStore[searchValue]);
       } else {

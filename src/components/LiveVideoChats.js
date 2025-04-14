@@ -22,8 +22,6 @@ function LiveVideoChats() {
     };
   }, []);
 
-
-
   return !chatMessages.length ? (
     "...Loading Live Chats"
   ) : (

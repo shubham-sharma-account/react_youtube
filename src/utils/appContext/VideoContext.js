@@ -1,8 +1,10 @@
 import { createContext, useState } from "react";
 
-export const VideoContext = createContext({});
+//accessed by useContext
+export const VideoContext = createContext({});  
 
-export const VideoProvider = ({ children }) => {
+//wrapped around the components that need to access the context
+export const VideoProvider = ({ children }) => {  
   const [videos, setVideos] = useState([]);
 
   return (

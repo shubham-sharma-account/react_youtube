@@ -3,8 +3,6 @@ import React from "react";
 function VideoCard({ info }) {
   if (!info) return false;
 
-  console.log("info ",info)
-
   const { snippet, statistics } = info;
   const { title, channelTitle, thumbnails } = snippet;
 
